@@ -18,6 +18,9 @@ const SITE = {
 
   // Twitch channel name for the live player ("" to hide it)
   twitchChannel: "dizzyits_",
+
+  // YouTube channel ID (starts with UC). Shows all your long videos on the link page.
+  youtubeChannelId: "UCMyz4sr-H-1bguHgwrInSZw",
 };
 
 /* Ads (Google AdSense). Leave both blank and no ads show.

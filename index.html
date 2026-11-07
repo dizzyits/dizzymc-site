@@ -93,7 +93,11 @@
   </div>
 
   <div class="block" id="vidBlock"><h2>Latest</h2><div id="vids"></div></div>
-  <div class="block" id="newsBlock"><h2>News</h2><div id="news"></div></div>
+  <div class="block" id="ytBlock"><h2>YouTube</h2>
+    <div class="vid"><div class="ratio" id="ytFrame"></div>
+      <p><a id="ytLink" href="https://www.youtube.com/@DizzyIts/videos" target="_blank" rel="noopener" style="font-weight:800">All videos on my channel &rarr;</a></p>
+    </div>
+  </div>
 
   <div class="block ad-slot"></div>
 
@@ -125,22 +129,12 @@
   }).join("");
   if (vids) $("vids").innerHTML = vids; else $("vidBlock").remove();
 
-  if (NEWS.length) {
-    $("news").innerHTML = NEWS.map((n,i) => {
-      const hasImg = n.image && /^https?:\/\//.test(n.image);
-      const paras = String(n.body || "").split(/\n\s*\n/).map(t => `<p>${esc(t)}</p>`).join("");
-      return `<article class="news" id="n${i}"><small>${fmt(n.date)}</small><h3>${esc(n.title)}</h3>
-        ${hasImg ? `<img src="${esc(n.image)}" alt="" loading="lazy">` : ""}
-        <div>${esc(n.summary)}</div>
-        ${n.body ? `<div class="body">${paras}</div><button data-i="${i}">Read more</button>` : ""}</article>`;
-    }).join("");
-  } else $("newsBlock").remove();
-
-  document.addEventListener("click", e => {
-    const b = e.target.closest(".news button"); if (!b) return;
-    const a = $("n" + b.dataset.i); a.classList.toggle("open");
-    b.textContent = a.classList.contains("open") ? "Show less" : "Read more";
-  });
+  // YouTube: every long-form upload in one playlist player (Shorts are left out)
+  const yt = SITE.youtubeChannelId || "";
+  if (/^UC[\w-]{22}$/.test(yt)) {
+    $("ytFrame").innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/videoseries?list=UULF${yt.slice(2)}" loading="lazy" allowfullscreen title="Dizzyits YouTube videos"></iframe>`;
+    if (SITE.links.youtube) $("ytLink").href = SITE.links.youtube.replace(/\/?$/, "/videos");
+  } else $("ytBlock").remove();
 </script>
 </body>
 </html>

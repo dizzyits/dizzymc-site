@@ -48,8 +48,20 @@
   ul.links{padding-left:20px;margin-bottom:12px}
   footer{margin-top:22px;text-align:center;font-size:.8rem;color:var(--muted);clear:both}
   @media(max-width:700px){
-    .infobox{float:none;width:100%;margin:0 0 18px}
-    h1{font-size:1.7rem}
+    body{font-size:16px;line-height:1.6}
+    .wrap{padding:12px 12px 36px}
+    .page{padding:14px 14px 20px;border-radius:12px}
+    h1{font-size:1.6rem;margin-bottom:12px}
+    h2{font-size:1.3rem;margin-top:22px}
+    /* compact info box: small picture, tight rows, links on one wrapped line */
+    .infobox{float:none;width:100%;margin:0 0 16px;font-size:.88rem}
+    .infobox .title{padding:8px;font-size:1rem}
+    .infobox img{width:130px;height:130px;aspect-ratio:auto;margin:12px auto;border:2px solid var(--accent);border-radius:12px}
+    .infobox .sub{padding:6px;font-size:.9rem}
+    .infobox dl{padding:2px 12px 8px}
+    .infobox .row{grid-template-columns:96px 1fr;gap:6px;padding:7px 0}
+    .infobox dd a{display:inline-block;margin:0 12px 2px 0}
+    .toc{display:block;min-width:0;width:100%}
   }
 </style>
 </head>

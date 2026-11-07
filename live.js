@@ -133,3 +133,81 @@
     }, 12000);
   }
 })();
+
+/* Live YouTube subscriber banner. Shows at the top whenever you are NOT live on Twitch
+   (the red LIVE banner takes its place during a stream, then this comes back).
+   Refreshes every 15 seconds with no page refresh. Free public counter APIs, no key. */
+(function () {
+  var id = (typeof SITE !== "undefined" && SITE.youtubeChannelId) || "";
+  if (!/^UC[\w-]{20,}$/.test(id)) return;
+  var ytUrl = (typeof SITE !== "undefined" && SITE.links && SITE.links.youtube) || "https://www.youtube.com/";
+  var name = (typeof SITE !== "undefined" && SITE.name) || "Dizzyits";
+
+  var css = document.createElement("style");
+  css.textContent =
+    "#subBanner{position:fixed;top:0;left:0;right:0;z-index:9998;display:none;align-items:center;justify-content:center;gap:12px;" +
+    "height:44px;padding:0 14px;color:#fff;font:800 .95rem/1 system-ui,Segoe UI,sans-serif;letter-spacing:.03em;text-decoration:none;" +
+    "background:linear-gradient(90deg,#1a1050,#2f2fb8,#6a2bd9,#2f2fb8,#1a1050);background-size:300% 100%;animation:subSweep 8s linear infinite;" +
+    "border-bottom:2px solid #7fa8ff;box-shadow:0 0 18px rgba(106,92,255,.55)}" +
+    "#subBanner:hover{filter:brightness(1.2)}" +
+    "#subBanner b{font-size:1.25rem;letter-spacing:.02em;font-variant-numeric:tabular-nums;text-shadow:0 0 10px #9db8ff}" +
+    "#subBanner .yt{display:inline-block;width:22px;height:16px;border-radius:5px;background:#f00;position:relative;flex:none}" +
+    "#subBanner .yt:after{content:'';position:absolute;left:8px;top:4px;border-left:7px solid #fff;border-top:4px solid transparent;border-bottom:4px solid transparent}" +
+    "#subBanner .pulse{width:8px;height:8px;border-radius:50%;background:#5dffa0;animation:subPulse 1.6s infinite;flex:none}" +
+    "body.sub-on:not(.live-on) #subBanner{display:flex}body.sub-on{margin-top:44px}" +
+    "body.sub-on .about-btn{top:60px!important}" +
+    "@keyframes subSweep{to{background-position:300% 0}}" +
+    "@keyframes subPulse{50%{opacity:.25;transform:scale(.7)}}" +
+    "@media(max-width:640px){#subBanner{font-size:.8rem;gap:8px}#subBanner b{font-size:1.05rem}body.sub-on .about-btn{top:54px!important}}" +
+    "@media(prefers-reduced-motion:reduce){#subBanner,#subBanner .pulse{animation:none}}";
+  document.head.appendChild(css);
+
+  var el = document.createElement("a");
+  el.id = "subBanner";
+  el.href = ytUrl;
+  el.target = "_blank";
+  el.rel = "noopener";
+  el.innerHTML = '<span class="yt"></span><span class="t1"></span><b>0</b><span class="t2">subscribers</span><span class="pulse" title="Live count"></span>';
+  el.querySelector(".t1").textContent = name + " on YouTube:";
+  document.body.insertBefore(el, document.body.firstChild);
+  var num = el.querySelector("b");
+  var shown = null, anim = null;
+
+  function render(n) {
+    if (shown === null) { shown = n; num.textContent = n.toLocaleString(); return; }
+    if (n === shown) return;
+    var from = shown, to = n, t0 = Date.now();
+    shown = n;
+    clearInterval(anim);
+    anim = setInterval(function () {
+      var k = Math.min(1, (Date.now() - t0) / 900);
+      num.textContent = Math.round(from + (to - from) * k).toLocaleString();
+      if (k >= 1) clearInterval(anim);
+    }, 40);
+  }
+  function got(n) {
+    if (typeof n !== "number" || !isFinite(n) || n < 0) return false;
+    render(n);
+    document.body.classList.add("sub-on");
+    return true;
+  }
+  function viaSocial() {
+    return fetch("https://api.socialcounts.org/youtube-live-subscriber-count/" + id, { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { var c = j.counters || {}; return got((c.estimation || c.api || {}).subscriberCount); });
+  }
+  function viaMixerno() {
+    return fetch("https://mixerno.space/api/youtube-channel-counter/user/" + id, { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        var c = (j.counts || []).filter(function (x) { return x.value === "subscribers"; })[0];
+        return got(c && c.count);
+      });
+  }
+  function update() {
+    viaSocial().then(function (ok) { if (!ok) return viaMixerno(); }).catch(function () { return viaMixerno().catch(function () {}); });
+  }
+  update();
+  setInterval(update, 15000);
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) update(); });
+})();

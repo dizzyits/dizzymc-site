@@ -28,6 +28,9 @@
     "@keyframes arrowL{0%,100%{transform:translateX(-10px)}50%{transform:translateX(8px)}}" +
     "@keyframes arrowR{0%,100%{transform:translateX(10px)}50%{transform:translateX(-8px)}}" +
     "@media(max-width:640px){.live-target{margin-left:42px!important;margin-right:42px!important}.live-arrow.l{left:-38px}.live-arrow.r{right:-38px}.live-arrow{width:30px;height:30px;margin-top:-15px}}" +
+    "#livePreview{position:relative;width:100%;aspect-ratio:16/9;margin:0 0 22px;background:#000;border:3px solid #000;box-shadow:4px 4px 0 #000;border-radius:6px;overflow:hidden}" +
+    "#livePreview iframe{position:absolute;inset:0;width:100%;height:100%;border:0}" +
+    "#livePreview span{position:absolute;top:8px;left:8px;z-index:2;background:#e3101f;color:#fff;font:800 .7rem/1 system-ui,sans-serif;letter-spacing:.06em;padding:5px 8px;border-radius:4px;pointer-events:none}" +
     "@media(prefers-reduced-motion:reduce){.live-arrow,#liveBanner i{animation:none}}";
   document.head.appendChild(css);
 
@@ -49,6 +52,20 @@
     if (on === isLive) return;
     isLive = on;
     document.body.classList.toggle("live-on", on);
+
+    // Muted autoplay preview of the stream (only on pages with the link list)
+    var list = document.querySelector(".list");
+    var prev = document.getElementById("livePreview");
+    if (on && list && !prev) {
+      prev = document.createElement("div");
+      prev.id = "livePreview";
+      prev.innerHTML = '<span>● LIVE NOW</span><iframe allowfullscreen title="Live stream preview" allow="autoplay; fullscreen"></iframe>';
+      prev.querySelector("iframe").src = "https://player.twitch.tv/?channel=" + channel +
+        "&muted=true&autoplay=true&parent=" + encodeURIComponent(location.hostname || "localhost");
+      list.parentNode.insertBefore(prev, list);
+    } else if (!on && prev) {
+      prev.remove();
+    }
     targets().forEach(function (a) {
       var arrows = a.querySelectorAll(".live-arrow");
       if (on && !arrows.length) {

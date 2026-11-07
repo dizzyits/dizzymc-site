@@ -77,6 +77,7 @@
       <div class="sub">Creator Information</div>
       <dl>
         <div class="row"><dt>Handle</dt><dd>@DizzyIts</dd></div>
+        <div class="row"><dt>Born</dt><dd>June 10, 2004 (age <span class="age">22</span>)</dd></div>
         <div class="row"><dt>Known for</dt><dd>Minecraft videos</dd></div>
         <div class="row"><dt>Content</dt><dd>Long-form and short-form videos</dd></div>
         <div class="row"><dt>Editing software</dt><dd>DaVinci Resolve</dd></div>
@@ -94,7 +95,7 @@
       </dl>
     </aside>
 
-    <p><b>Dizzyits</b> is a small, up-and-coming content creator known for his <i>Minecraft</i> videos, which he edits in DaVinci Resolve, and for dubstep and hardcore music released on SoundCloud.</p>
+    <p><b>Dizzyits</b> (born June 10, 2004 [age <span class="age">22</span>]) is a small, up-and-coming content creator known for his <i>Minecraft</i> videos, which he edits in DaVinci Resolve, and for dubstep and hardcore music released on SoundCloud.</p>
     <p>He makes both long-form and short-form videos, and writes his own music with help from his producer, Alzha Studio. Beyond that, he makes it all for fun.</p>
 
     <nav class="toc" aria-label="Contents">
@@ -135,6 +136,14 @@
   </article>
   <footer>&copy; <span id="yr"></span> dizzymc.net</footer>
 </div>
-<script>document.getElementById("yr").textContent = new Date().getFullYear();</script>
+<script>
+  document.getElementById("yr").textContent = new Date().getFullYear();
+  // Age updates itself every year/birthday (born June 10, 2004)
+  (function () {
+    var now = new Date(), age = now.getFullYear() - 2004;
+    if (now.getMonth() < 5 || (now.getMonth() === 5 && now.getDate() < 10)) age--;
+    document.querySelectorAll(".age").forEach(function (el) { el.textContent = age; });
+  })();
+</script>
 </body>
 </html>

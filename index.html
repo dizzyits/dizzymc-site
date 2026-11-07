@@ -18,7 +18,7 @@
 {"@context":"https://schema.org","@type":"WebSite","name":"Dizzyits","alternateName":["DizzyIts","Dizzy Its"],"url":"https://dizzymc.net/"}
 </script>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Person","name":"Dizzyits","url":"https://dizzymc.net/","image":"https://dizzymc.net/avatar.webp","sameAs":["https://www.youtube.com/@DizzyIts","https://www.twitch.tv/dizzyits_","https://x.com/DizzyIts_","https://discord.com/invite/nFR9J3K7vZ"]}
+{"@context":"https://schema.org","@type":"Person","name":"Dizzyits","url":"https://dizzymc.net/","image":"https://dizzymc.net/avatar.webp","description":"Dizzyits is a small, up-and-coming creator who makes Minecraft videos edited in DaVinci Resolve, and dubstep and hardcore music on SoundCloud with producer Alzha Studio.","sameAs":["https://www.youtube.com/@DizzyIts","https://www.twitch.tv/dizzyits_","https://x.com/DizzyIts_","https://discord.com/invite/nFR9J3K7vZ"]}
 </script>
 <style>
   /* Change these two lines to recolor the whole page */
@@ -102,6 +102,12 @@
   .vid p,.ad-slot small{color:#cfdcff}
   .vid p a{color:#9bc0ff}
   .avatar{animation:floaty 5s ease-in-out infinite}
+  .about{background:linear-gradient(135deg,rgba(24,32,84,.8),rgba(54,28,110,.74));border:2px solid #5b8cff;border-radius:14px;
+    padding:18px 20px;color:#eaf0ff;font-weight:500;line-height:1.55;box-shadow:0 0 14px rgba(91,140,255,.4),inset 0 0 18px rgba(120,90,255,.18)}
+  .about p{margin-bottom:12px}
+  .about dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin-top:6px;padding:12px 14px;border:1px solid #3a4a8a;border-radius:10px;background:rgba(7,11,31,.55);font-size:.9rem}
+  .about dt{color:#9db0e8;font-weight:700}
+  .about dd{margin:0}
   @keyframes glowPulse{
     0%,100%{box-shadow:0 0 10px rgba(91,140,255,.32),inset 0 0 14px rgba(120,90,255,.14)}
     50%{box-shadow:0 0 22px rgba(130,100,255,.7),inset 0 0 20px rgba(120,90,255,.3)}}
@@ -142,13 +148,17 @@
     </div>
   </div>
 
+  <div class="block" id="aboutBlock"><h2 id="aboutTitle">About</h2>
+    <div class="about"><div id="aboutText"></div><dl id="aboutFacts"></dl></div>
+  </div>
+
   <div class="block ad-slot"></div>
 
   <footer>&copy; <span id="yr"></span> dizzymc.net
   <div style="margin-top:10px"><span title="This site uses an encrypted HTTPS connection" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid #5b8cff;border-radius:999px;background:rgba(24,32,84,.7);color:#cfe0ff;font-size:.78rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7dffa8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Secure connection (HTTPS)</span></div>
 </footer>
 </main>
-<script src="content.js?v=3"></script>
+<script src="content.js?v=4"></script>
 <script src="ads.js" defer></script>
 <script src="live.js?v=5" defer></script>
 <script>
@@ -180,6 +190,13 @@
     $("ytFrame").innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/videoseries?list=UULF${yt.slice(2)}&autoplay=1&mute=1&loop=1&playsinline=1&enablejsapi=1&origin=${encodeURIComponent(location.origin)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Dizzyits YouTube videos"></iframe>`;
     if (SITE.links.youtube) $("ytLink").href = SITE.links.youtube.replace(/\/?$/, "/videos");
   } else $("ytBlock").remove();
+
+  // About section (text comes from content.js)
+  if (typeof ABOUT !== "undefined" && ABOUT.paragraphs && ABOUT.paragraphs.length) {
+    $("aboutTitle").textContent = ABOUT.title || "About";
+    $("aboutText").innerHTML = ABOUT.paragraphs.map(t => `<p>${esc(t)}</p>`).join("");
+    $("aboutFacts").innerHTML = (ABOUT.facts || []).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("");
+  } else $("aboutBlock").remove();
 </script>
 </body>
 </html>

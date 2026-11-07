@@ -23,6 +23,24 @@ const SITE = {
   youtubeChannelId: "UCMyz4sr-H-1bguHgwrInSZw",
 };
 
+/* About section on the link page. Edit the text and facts freely. */
+const ABOUT = {
+  title: "About Dizzyits",
+  paragraphs: [
+    "Dizzyits is a small, up-and-coming content creator who makes Minecraft videos. He edits them in DaVinci Resolve and posts both long-form and short-form videos.",
+    "He also makes music on SoundCloud under the name Dizzyits, mostly dubstep and hardcore. He writes his own tracks, with help from his producer, Alzha Studio.",
+    "Other than that, he just does it all for fun.",
+  ],
+  facts: [
+    ["Known for", "Minecraft videos"],
+    ["Content", "Long-form and short-form videos"],
+    ["Music", "Dubstep and hardcore (SoundCloud)"],
+    ["Producer", "Alzha Studio"],
+    ["Editing", "DaVinci Resolve"],
+    ["Find him on", "YouTube, Twitch, X, Discord, SoundCloud"],
+  ],
+};
+
 /* Ads (Google AdSense). Leave both blank and no ads show.
    After AdSense approves you: client looks like "ca-pub-1234567890123456",
    slot is the number of a Display ad unit you create in AdSense.        */

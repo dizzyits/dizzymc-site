@@ -8,6 +8,8 @@
   var url = "https://www.twitch.tv/" + channel;
   var name = (typeof SITE !== "undefined" && SITE.name) || "Dizzyits";
   var forced = /[?&]live=1\b/.test(location.search);
+  var testCh = (location.search.match(/[?&]testchannel=(\w+)/) || [])[1]; // for testing only
+  if (testCh) channel = testCh;
   var isLive = false;
 
   var css = document.createElement("style");
@@ -90,19 +92,31 @@
      goes online or offline (Twitch's own signal, no delay, no refresh needed).
      The decapi check above is only a backup if the player can't load. */
   var probeOk = false;
-  function startProbe() {
+  var probeN = 0;
+  function probeOnce() {
+    // A paused player only reports the channel state when it loads, so we load a
+    // fresh hidden player every 20 seconds and read what it says.
+    var old = document.getElementById("liveProbe" + probeN);
+    var id = "liveProbe" + (++probeN);
     var box = document.createElement("div");
-    box.id = "liveProbe";
+    box.id = id;
     box.style.cssText = "position:fixed;left:-9999px;top:0;width:400px;height:225px;opacity:0;pointer-events:none";
     document.body.appendChild(box);
     try {
-      var p = new Twitch.Player("liveProbe", {
+      var p = new Twitch.Player(id, {
         channel: channel, parent: [location.hostname || "localhost"],
         muted: true, autoplay: false, width: 400, height: 225
       });
       p.addEventListener(Twitch.Player.ONLINE, function () { probeOk = true; apply(true); });
       p.addEventListener(Twitch.Player.OFFLINE, function () { probeOk = true; apply(false); });
     } catch (e) {}
+    // remove the previous probe once the new one is up
+    setTimeout(function () { if (old && old.parentNode) old.parentNode.removeChild(old); }, 8000);
+  }
+  function startProbe() {
+    probeOnce();
+    setInterval(probeOnce, 20000);
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) probeOnce(); });
   }
 
   if (forced) {

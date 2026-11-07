@@ -138,7 +138,7 @@ $("socials").innerHTML = soc.filter(([k]) => SITE.links[k])
   .map(([k,n]) => `<a href="${esc(SITE.links[k])}" target="_blank" rel="noopener">${n}</a>`).join("");
 
 if (SITE.twitchChannel && idOk(SITE.twitchChannel)) {
-  const parents = [location.hostname || "localhost", "dizzyits.com", "www.dizzyits.com"]
+  const parents = [location.hostname || "localhost", "dizzymc.net", "www.dizzymc.net"]
     .filter((v,i,a) => a.indexOf(v) === i).map(p => "&parent=" + encodeURIComponent(p)).join("");
   $("twitchBox").innerHTML = `<iframe src="https://player.twitch.tv/?channel=${SITE.twitchChannel}&muted=true${parents}" allowfullscreen title="Twitch live"></iframe>`;
 } else {

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dizzyits</title>
+<meta name="description" content="Dizzyits - streams, videos, clips and news.">
+<style>
+  :root{
+    --bg:#121110; --panel:#1c1a18; --line:#3a3631; --text:#efe9df; --muted:#9a9186; --accent:#ff6a1a;
+    --head:Impact,"Arial Narrow Bold","Franklin Gothic Medium",sans-serif;
+    --body:Georgia,"Times New Roman",serif;
+    --mono:ui-monospace,Consolas,Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--bg);color:var(--text);font:17px/1.65 var(--body)}
+  a{color:inherit}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 22px}
+
+  header.top{border-bottom:2px solid var(--text)}
+  header.top .wrap{display:flex;justify-content:space-between;align-items:baseline;padding-top:18px;padding-bottom:14px;gap:20px;flex-wrap:wrap}
+  .logo{font-family:var(--head);font-size:1.7rem;letter-spacing:.02em;text-transform:uppercase;text-decoration:none}
+  .logo b{color:var(--accent);font-weight:400}
+  nav a{font-family:var(--mono);font-size:.85rem;text-transform:uppercase;margin-left:22px;text-decoration:none;color:var(--muted)}
+  nav a:hover{color:var(--accent)}
+
+  .intro{padding:64px 0 40px;border-bottom:1px solid var(--line)}
+  .intro h1{font-family:var(--head);font-weight:400;text-transform:uppercase;font-size:clamp(3.4rem,13vw,9rem);line-height:.88;letter-spacing:-.01em}
+  .intro h1 em{font-style:normal;color:var(--accent)}
+  .intro p{max-width:34em;margin:22px 0 24px;color:var(--muted);font-size:1.1rem}
+  .links a{display:inline-block;font-family:var(--mono);font-size:.85rem;text-transform:uppercase;border:2px solid var(--text);padding:7px 14px;margin:0 8px 8px 0;text-decoration:none}
+  .links a:hover{background:var(--accent);border-color:var(--accent);color:#000}
+
+  section{padding:46px 0;border-bottom:1px solid var(--line)}
+  h2{font-family:var(--head);font-weight:400;font-size:2rem;text-transform:uppercase;margin-bottom:20px}
+  h2 small{font-family:var(--mono);font-size:.75rem;color:var(--muted);margin-left:10px;letter-spacing:.05em}
+
+  .ratio{position:relative;aspect-ratio:16/9;background:#000}
+  .ratio iframe,.tt-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  #twitchBox{border:2px solid var(--text)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:26px 22px;align-items:start}
+  .card .tt-frame{position:relative;aspect-ratio:9/16;max-height:520px;background:#000}
+  .card h3{font-size:1.05rem;font-weight:700;margin-top:8px;line-height:1.3}
+  .meta{font-family:var(--mono);font-size:.75rem;color:var(--muted);text-transform:uppercase;margin-top:2px}
+
+  .post{display:grid;grid-template-columns:150px 1fr;gap:6px 26px;padding:22px 0;border-top:1px solid var(--line)}
+  .post:first-child{border-top:0;padding-top:0}
+  .post .meta{padding-top:6px}
+  .post h3{font-size:1.5rem;line-height:1.25;margin-bottom:6px}
+  .post img{width:100%;max-height:260px;object-fit:cover;margin:6px 0 12px;display:block}
+  .post .body{display:none;margin-top:10px}
+  .post.open .body{display:block}
+  .post .body p{margin-bottom:12px}
+  .more{background:none;border:0;border-bottom:1px solid var(--accent);color:var(--accent);font-family:var(--mono);font-size:.8rem;text-transform:uppercase;cursor:pointer;padding:0;margin-top:6px}
+  .empty{color:var(--muted)}
+
+  .ad-slot{margin:30px 0;min-height:90px}
+  .ad-slot small{display:block;font-family:var(--mono);font-size:.68rem;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
+  footer{padding:28px 0 40px;font-family:var(--mono);font-size:.78rem;color:var(--muted);text-transform:uppercase}
+  @media(max-width:620px){
+    .post{grid-template-columns:1fr}
+    nav a{margin:0 16px 0 0}
+  }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="#top">Dizzy<b>its</b></a>
+  <nav><a href="#live" id="navLive">Live</a><a href="#videos">Videos</a><a href="#news">News</a></nav>
+</div></header>
+
+<div class="intro" id="top"><div class="wrap">
+  <h1 id="siteName"></h1>
+  <p id="tagline"></p>
+  <div class="links" id="socials"></div>
+</div></div>
+
+<main class="wrap">
+  <section id="live"><h2>Live<small>twitch</small></h2>
+    <div class="ratio" id="twitchBox"></div>
+  </section>
+
+  <section id="videos"><h2>Videos<small>youtube / tiktok / clips</small></h2><div class="grid" id="posts"></div></section>
+
+  <div class="ad-slot"></div>
+
+  <section id="news" style="border-bottom:0"><h2>News</h2><div id="newsList"></div></section>
+
+  <div class="ad-slot"></div>
+</main>
+
+<footer><div class="wrap">&copy; <span id="yr"></span> <span id="foot"></span></div></footer>
+
+<script src="content.js"></script>
+<script src="ads.js" defer></script>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const idOk = s => /^[\w-]+$/.test(String(s));
+const fmt = d => { const t = new Date(d + "T12:00:00"); return isNaN(t) ? "" : t.toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"}); };
+
+document.title = SITE.name;
+$("siteName").innerHTML = esc(SITE.name).replace(/(its)$/i, "<em>$1</em>");
+$("tagline").textContent = SITE.tagline;
+$("foot").textContent = SITE.name;
+$("yr").textContent = new Date().getFullYear();
+
+const soc = [["discord","Discord"],["youtube","YouTube"],["twitch","Twitch"],["x","X"],["tiktok","TikTok"]];
+$("socials").innerHTML = soc.filter(([k]) => SITE.links[k])
+  .map(([k,n]) => `<a href="${esc(SITE.links[k])}" target="_blank" rel="noopener">${n}</a>`).join("");
+
+if (SITE.twitchChannel && idOk(SITE.twitchChannel)) {
+  const parents = [location.hostname || "localhost", "dizzyits.com", "www.dizzyits.com"]
+    .filter((v,i,a) => a.indexOf(v) === i).map(p => "&parent=" + encodeURIComponent(p)).join("");
+  $("twitchBox").innerHTML = `<iframe src="https://player.twitch.tv/?channel=${SITE.twitchChannel}&muted=true${parents}" allowfullscreen title="Twitch live"></iframe>`;
+} else {
+  $("live").remove(); $("navLive").remove();
+}
+
+function embed(p) {
+  if (!idOk(p.id)) return "";
+  if (p.type === "youtube")
+    return `<div class="ratio"><iframe src="https://www.youtube-nocookie.com/embed/${p.id}" loading="lazy" allowfullscreen title="${esc(p.title)}"></iframe></div>`;
+  if (p.type === "tiktok")
+    return `<div class="tt-frame"><iframe src="https://www.tiktok.com/embed/v2/${p.id}" loading="lazy" allowfullscreen title="${esc(p.title)}"></iframe></div>`;
+  if (p.type === "twitch-clip") {
+    const par = encodeURIComponent(location.hostname || "localhost");
+    return `<div class="ratio"><iframe src="https://clips.twitch.tv/embed?clip=${p.id}&parent=${par}" loading="lazy" allowfullscreen title="${esc(p.title)}"></iframe></div>`;
+  }
+  return "";
+}
+$("posts").innerHTML = POSTS.length ? POSTS.map(p => `
+  <article class="card">${embed(p)}
+    <h3>${esc(p.title)}</h3>
+    <div class="meta">${esc(p.type.replace("-"," "))} &middot; ${fmt(p.date)}</div>
+  </article>`).join("") : "";
+if (!POSTS.length) $("videos").remove();
+
+$("newsList").innerHTML = NEWS.length ? NEWS.map((n,i) => {
+  const img = n.image && /^https?:\/\//.test(n.image);
+  const paras = String(n.body || "").split(/\n\s*\n/).map(t => `<p>${esc(t)}</p>`).join("");
+  return `<article class="post" id="a${i}">
+    <div class="meta">${fmt(n.date)}</div>
+    <div><h3>${esc(n.title)}</h3>
+      ${img ? `<img src="${esc(n.image)}" alt="" loading="lazy">` : ""}
+      <p>${esc(n.summary)}</p>
+      ${n.body ? `<div class="body">${paras}</div><button class="more" data-i="${i}">Read more</button>` : ""}
+    </div></article>`;
+}).join("") : `<p class="empty">No news yet.</p>`;
+
+document.addEventListener("click", e => {
+  const b = e.target.closest(".more"); if (!b) return;
+  const a = $("a" + b.dataset.i); a.classList.toggle("open");
+  b.textContent = a.classList.contains("open") ? "Show less" : "Read more";
+});
+</script>
+</body>
+</html>

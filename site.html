@@ -142,7 +142,7 @@ $("tagline").textContent = SITE.tagline;
 $("foot").textContent = SITE.name;
 $("yr").textContent = new Date().getFullYear();
 
-const soc = [["discord","Discord"],["youtube","YouTube"],["twitch","Twitch"],["x","X"],["tiktok","TikTok"]];
+const soc = [["discord","Discord"],["youtube","YouTube"],["twitch","Twitch"],["x","X"],["soundcloud","SoundCloud"],["tiktok","TikTok"]];
 $("socials").innerHTML = soc.filter(([k]) => SITE.links[k])
   .map(([k,n]) => `<a href="${esc(SITE.links[k])}" target="_blank" rel="noopener">${n}</a>`).join("");
 

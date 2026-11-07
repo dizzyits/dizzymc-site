@@ -13,6 +13,7 @@ const SITE = {
     youtube: "https://www.youtube.com/@DizzyIts",
     twitch:  "https://www.twitch.tv/dizzyits_",
     x:       "https://x.com/DizzyIts_",
+    soundcloud: "https://soundcloud.com/dizzyits",
     tiktok:  "",
   },
 

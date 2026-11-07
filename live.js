@@ -82,12 +82,40 @@
     if (forced) return apply(true);
     fetch("https://decapi.me/twitch/uptime/" + channel + "?t=" + Date.now(), { cache: "no-store" })
       .then(function (r) { return r.text(); })
-      .then(function (t) { apply(!/offline|not found|error|no user/i.test(t) && t.trim().length > 0); })
+      .then(function (t) { if (/offline/i.test(t)) apply(false); else if (/\d+\s*(second|minute|hour|day)/i.test(t)) apply(true); })
       .catch(function () {});
   }
 
-  check();
-  setInterval(check, 15000);
-  document.addEventListener("visibilitychange", function () { if (!document.hidden) check(); });
-  window.addEventListener("focus", check);
+  /* Real-time detection: a hidden Twitch player tells us the moment the channel
+     goes online or offline (Twitch's own signal, no delay, no refresh needed).
+     The decapi check above is only a backup if the player can't load. */
+  var probeOk = false;
+  function startProbe() {
+    var box = document.createElement("div");
+    box.id = "liveProbe";
+    box.style.cssText = "position:fixed;left:-9999px;top:0;width:400px;height:225px;opacity:0;pointer-events:none";
+    document.body.appendChild(box);
+    try {
+      var p = new Twitch.Player("liveProbe", {
+        channel: channel, parent: [location.hostname || "localhost"],
+        muted: true, autoplay: false, width: 400, height: 225
+      });
+      p.addEventListener(Twitch.Player.ONLINE, function () { probeOk = true; apply(true); });
+      p.addEventListener(Twitch.Player.OFFLINE, function () { probeOk = true; apply(false); });
+    } catch (e) {}
+  }
+
+  if (forced) {
+    apply(true);
+  } else {
+    var sc = document.createElement("script");
+    sc.src = "https://embed.twitch.tv/embed/v1.js";
+    sc.onload = startProbe;
+    document.head.appendChild(sc);
+    setTimeout(function () {
+      if (probeOk) return;
+      check();
+      setInterval(function () { if (!probeOk) check(); }, 15000);
+    }, 12000);
+  }
 })();

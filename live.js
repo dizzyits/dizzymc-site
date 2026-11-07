@@ -1,5 +1,5 @@
 /* Shows a red "LIVE on Twitch" banner and animated arrows on the Twitch button
-   while your stream is live. Checks every 60 seconds.
+   while your stream is live. Checks every 15 seconds, no refresh needed.
    Uses the free decapi.me status API (no key needed).
    Test it any time by opening the page with ?live=1 on the end of the address. */
 (function () {
@@ -70,5 +70,7 @@
   }
 
   check();
-  setInterval(check, 60000);
+  setInterval(check, 15000);
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) check(); });
+  window.addEventListener("focus", check);
 })();
